@@ -1,0 +1,37 @@
+#!/bin/sh
+# chkconfig: 3 21 91
+# description: Firewall
+
+IPT=/sbin/iptables
+
+case "$1" in
+start)
+$IPT -F INPUT
+$IPT -A INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+$IPT -A INPUT -i eth0 -p tcp --dport 22 -j ACCEPT
+$IPT -A INPUT -i eth0 -p tcp --dport 25 -j ACCEPT
+#$IPT -A INPUT -i eth0 -p tcp --dport 53 -j ACCEPT
+#$IPT -A INPUT -i eth0 -p udp --dport 53 -j ACCEPT
+$IPT -A INPUT -i eth0 -p tcp --dport 80 -j ACCEPT
+$IPT -A INPUT -i eth0 -p tcp --dport 110 -j ACCEPT
+$IPT -A INPUT -i eth0 -p tcp --dport 443 -j ACCEPT
+$IPT -A INPUT -i eth0 -p icmp --source proxy.ovh.net -j ACCEPT
+$IPT -A INPUT -i eth0 -p icmp --source proxy.p19.ovh.net -j ACCEPT
+$IPT -A INPUT -i eth0 -p icmp --source proxy.rbx.ovh.net -j ACCEPT
+$IPT -A INPUT -i eth0 -p icmp --source proxy.rbx2.ovh.net -j ACCEPT
+$IPT -A INPUT -i eth0 -p icmp --source 5.39.82.251 -j ACCEPT
+$IPT -A INPUT -i eth0 -p icmp --source 5.39.82.250 -j ACCEPT
+$IPT -A INPUT -i eth0 -p icmp --source ping.ovh.net -j ACCEPT
+$IPT -A INPUT -i eth0 -j DROP
+exit 0
+;;
+
+stop)
+$IPT -F INPUT
+exit 0
+;;
+*)
+echo "Usage: /etc/init.d/firewall {start|stop}"
+exit 1
+;;
+esac
